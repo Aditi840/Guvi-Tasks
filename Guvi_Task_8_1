@@ -1,0 +1,167 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Aditi840/A-star-shortest-path-finding-algorithm/blob/main/Guvi_Task_8_1\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "RzWQKLEgV7iJ",
+        "outputId": "146dc4e0-8d7b-4d0e-d035-5932aa0d4b97"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Looking in indexes: https://pypi.org/simple, https://us-python.pkg.dev/colab-wheels/public/simple/\n",
+            "Collecting translate\n",
+            "  Downloading translate-3.6.1-py2.py3-none-any.whl (12 kB)\n",
+            "Requirement already satisfied: requests in /usr/local/lib/python3.9/dist-packages (from translate) (2.27.1)\n",
+            "Collecting libretranslatepy==2.1.1\n",
+            "  Downloading libretranslatepy-2.1.1-py3-none-any.whl (3.2 kB)\n",
+            "Requirement already satisfied: lxml in /usr/local/lib/python3.9/dist-packages (from translate) (4.9.2)\n",
+            "Requirement already satisfied: click in /usr/local/lib/python3.9/dist-packages (from translate) (8.1.3)\n",
+            "Requirement already satisfied: idna<4,>=2.5 in /usr/local/lib/python3.9/dist-packages (from requests->translate) (3.4)\n",
+            "Requirement already satisfied: charset-normalizer~=2.0.0 in /usr/local/lib/python3.9/dist-packages (from requests->translate) (2.0.12)\n",
+            "Requirement already satisfied: certifi>=2017.4.17 in /usr/local/lib/python3.9/dist-packages (from requests->translate) (2022.12.7)\n",
+            "Requirement already satisfied: urllib3<1.27,>=1.21.1 in /usr/local/lib/python3.9/dist-packages (from requests->translate) (1.26.15)\n",
+            "Installing collected packages: libretranslatepy, translate\n",
+            "Successfully installed libretranslatepy-2.1.1 translate-3.6.1\n"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install translate"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 3,
+      "metadata": {
+        "id": "txyhhcVCUAg7"
+      },
+      "outputs": [],
+      "source": [
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "from translate import Translator"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "df = pd.read_csv('/content/drive/MyDrive/dataset (1)/English.csv')"
+      ],
+      "metadata": {
+        "id": "Ec_bGJSesXOn"
+      },
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 7,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "8Z5DhDllVPXK",
+        "outputId": "62cf0b7c-6ed7-40f6-fcba-bdaff2c36188"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "                                  English words/sentences\n",
+            "154386  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "149823  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "53776   MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "149823  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "149823  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "...                                                   ...\n",
+            "154386  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "154386  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "149823  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "154386  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "149823  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "\n",
+            "[5000 rows x 1 columns]\n"
+          ]
+        }
+      ],
+      "source": [
+        "df = df.sample(n=5000, random_state=42, replace=True)\n",
+        "# Define a function to translate a given text to a given language\n",
+        "def translate_text(text, dest_lang):\n",
+        "    translator = Translator(to_lang=dest_lang)\n",
+        "    translation = translator.translate(text)\n",
+        "    return translation\n",
+        "\n",
+        "# Apply the translation function to each column of the DataFrame\n",
+        "for col in df.columns:\n",
+        "    df[col] = df[col].apply(lambda x: translate_text(x, 'es')) # 'es' for Spanish\n",
+        "    df[col] = df[col].apply(lambda x: translate_text(x, 'fr')) # 'fr' for French\n",
+        "    df[col] = df[col].apply(lambda x: translate_text(x, 'de')) # 'de' for German\n",
+        "\n",
+        "# Print the translated DataFrame\n",
+        "print(df)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "print(df.head(3))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "0fENhcORVFRV",
+        "outputId": "6e5bb446-e647-4cd5-884e-1079f151a79f"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "                                  English words/sentences\n",
+            "154386  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "149823  MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n",
+            "53776   MYMEMORY WARNING: YOU USED ALL AVAILABLE FREE ...\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "mount_file_id": "1EKccBEgtenQP5WIer1iHqFasBLUkIzDg",
+      "authorship_tag": "ABX9TyOqDu196FOE5PlquAgIUjXl",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
